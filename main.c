@@ -4,6 +4,17 @@
 #include <windows.h>
 #include "sorts.h"
 
+// menu consolidado (inclui aoh)
+static void menu_alg(void) {
+    printf("=== parte 1/2 comparacao de algoritmos de ordenacao ===\n");
+    printf("escolha o algoritmo\n");
+    printf("[0] bubble sort\n");
+    printf("[1] quicksort\n");
+    printf("[2] aoh (hibrido)\n");
+    printf("[3] rodar os tres\n");
+    printf("opcao: ");
+}
+
 // relogio de alta resolucao
 static double agora_seg(void) {
     static LARGE_INTEGER freq = {0};
@@ -105,16 +116,7 @@ static void rodar_bateria(const char *algonome, SortFn sortfn, int modo, const s
     }
 }
 
-// menus simples
-static void menu_alg(void) {
-    printf("=== parte 1 comparacao de algoritmos de ordenacao ===\n");
-    printf("escolha o algoritmo\n");
-    printf("[0] bubble sort\n");
-    printf("[1] quicksort\n");
-    printf("[2] rodar ambos\n");
-    printf("opcao: ");
-}
-
+// menu de modo
 static void menu_modo(void) {
     printf("\nescolha o tipo de entrada\n");
     printf("[0] vetor crescente\n");
@@ -124,6 +126,7 @@ static void menu_modo(void) {
     printf("opcao: ");
 }
 
+// menu de conjunto de tamanhos
 static void menu_tamanho(void) {
     printf("\nescolha o conjunto de tamanhos\n");
     printf("[0] apresentacao ate 500\n");
@@ -136,7 +139,7 @@ int main(void) {
 
     int alg = -1, modo = -1, conj = -1;
     menu_alg();
-    if (scanf("%d", &alg) != 1 || alg < 0 || alg > 2) { fprintf(stderr, "opcao invalida\n"); return 1; }
+    if (scanf("%d", &alg) != 1 || alg < 0 || alg > 3) { fprintf(stderr, "opcao invalida\n"); return 1; }
     menu_modo();
     if (scanf("%d", &modo) != 1 || modo < 0 || modo > 3) { fprintf(stderr, "opcao invalida\n"); return 1; }
     menu_tamanho();
@@ -145,17 +148,24 @@ int main(void) {
     const size_t *tams = (conj == 0) ? tamanhos_demo : tamanhos_full;
     size_t qt = (conj == 0) ? qt_demo : qt_full;
 
-    int algs[2]; int qalg = (alg == 2) ? 2 : 1;
-    algs[0] = (alg == 2) ? 0 : alg;
-    if (qalg == 2) algs[1] = 1;
+    int algs[3]; int qalg = (alg == 3) ? 3 : 1;
+    if (qalg == 1) {
+        algs[0] = alg;         // 0 bubble, 1 quick, 2 aoh
+    } else {
+        algs[0] = 0; algs[1] = 1; algs[2] = 2;
+    }
 
     int modos[3]; int qmod = (modo == 3) ? 3 : 1;
     modos[0] = (modo == 3) ? 0 : modo;
     if (qmod == 3) { modos[1] = 1; modos[2] = 2; }
 
     for (int ai = 0; ai < qalg; ++ai) {
-        const char *anome = (algs[ai]==0) ? "bubble" : "quick";
-        SortFn fn = (algs[ai]==0) ? bubble_sort : quicksort;
+        const char *anome;
+        SortFn fn;
+        if (algs[ai] == 0) { anome = "bubble"; fn = bubble_sort; }
+        else if (algs[ai] == 1) { anome = "quick"; fn = quicksort; }
+        else { anome = "aoh"; fn = aoh_sort; }
+
         for (int mi = 0; mi < qmod; ++mi) {
             rodar_bateria(anome, fn, modos[mi], tams, qt);
         }

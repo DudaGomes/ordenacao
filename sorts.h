@@ -11,5 +11,6 @@ typedef struct {
 
 void bubble_sort(int *v, size_t n, Metricas *m);
 void quicksort(int *v, size_t n, Metricas *m);
+void aoh_sort(int *v, size_t n, Metricas *m);
 
 #endif
