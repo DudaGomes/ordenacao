@@ -1,7 +1,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
+
+#ifdef _WIN32
 #include <windows.h>
+#else
+#include <sys/time.h>
+#endif
+
 #include "sorts.h"
 
 // menu consolidado (inclui aoh)
@@ -17,11 +23,17 @@ static void menu_alg(void) {
 
 // relogio de alta resolucao
 static double agora_seg(void) {
+#ifdef _WIN32
     static LARGE_INTEGER freq = {0};
     LARGE_INTEGER ctr;
     if (freq.QuadPart == 0) QueryPerformanceFrequency(&freq);
     QueryPerformanceCounter(&ctr);
     return (double)ctr.QuadPart / (double)freq.QuadPart;
+#else
+    struct timeval tv;
+    gettimeofday(&tv, NULL);
+    return tv.tv_sec + tv.tv_usec / 1000000.0;
+#endif
 }
 
 // tamanhos completos do enunciado
